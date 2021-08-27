@@ -48,11 +48,14 @@ THIRD_PARTY_APPS = [
     'django_cleanup',
     'social_django',
     'widget_tweaks',
+    'rest_framework'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    'apps.extract'
+]
 
 INSTALLED_APPS = DEFAULT_APPS + LOCAL_APPS + THIRD_PARTY_APPS
 
@@ -88,6 +91,16 @@ TEMPLATES = [
     },
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}
+
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookOAuth2',
     'social_core.backends.twitter.TwitterOAuth',
@@ -97,6 +110,19 @@ AUTHENTICATION_BACKENDS = (
 )
 
 WSGI_APPLICATION = 'app_main.wsgi.application'
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "db",
+        "PORT": 5432,
+        "CONN_MAX_AGE": 600,
+        "DISABLE_SERVER_SIDE_CURSORS": True,
+    },
+}
 
 
 # Password validation
