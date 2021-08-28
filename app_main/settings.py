@@ -26,7 +26,7 @@ SECRET_KEY = '!*ndp-(t$)0cgpl!q4bh^t^o%&*z8!=&g-*e+bocov1h#5zsux'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -48,7 +48,8 @@ THIRD_PARTY_APPS = [
     'django_cleanup',
     'social_django',
     'widget_tweaks',
-    'rest_framework'
+    'rest_framework',
+    "corsheaders"
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -69,6 +70,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    "corsheaders.middleware.CorsMiddleware"
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
 ]
 
 ROOT_URLCONF = 'app_main.urls'
@@ -94,7 +100,7 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
-        "rest_framework.renderers.BrowsableAPIRenderer",
+        #"rest_framework.renderers.BrowsableAPIRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",

@@ -4,4 +4,8 @@ RUN mkdir /code
 WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
+RUN apt-get update
+RUN apt-get install -y poppler-utils
+RUN apt install -y tesseract-ocr
+RUN apt install -y libtesseract-dev
 COPY . /code/

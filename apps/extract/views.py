@@ -7,16 +7,83 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.renderers import TemplateHTMLRenderer
+# models
+from .models import ExtractedData
+# serializers
+from .serializers import ExtractedDataSerializer
+# forms
+from .forms import UploadFileForm
 # utils
-from .utils import get_text_from_any_pdf
+from .utils import get_text_from_any_pdf, get_values_from_text, handle_uploaded_file
+import os
 
 # Create your views here.
 
-class ExtractApiView(APIView):
+class ExtractFromPathApiView(APIView):
     """
     """
     permission_classes = [IsAuthenticatedOrReadOnly]
-    def get(self, request, *args, **kwargs):
-        path = '/home/joldiazch/prgx_backend/Doc2.pdf'
-        text = get_text_from_any_pdf(path)
-        return Response({"text": text}, status=status.HTTP_200_OK)
+
+
+    def get(self, request):
+        """
+        """
+        extracted_data = ExtractedData.objects.all()
+        serializer = ExtractedDataSerializer(extracted_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def post(self, request):
+        """
+        """
+
+        # get doc_path and creck is not None
+        doc_path = request.query_params.get('doc_path', None)
+        if not doc_path:
+            return Response(
+                {"error": "No doc_path specified"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # check if file exists in root folder
+        # (volumen of docker contarier that allows it
+        # to read files from the host machine.)
+        head, file_name = os.path.split(doc_path)
+        path = './' + file_name
+        if not os.path.isfile(path):
+            return Response(
+                {
+                    "error":
+                    "file not found, the file must be located in the root folder of this project"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        data = get_values_from_text(path)
+        serializer = ExtractedDataSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ExtractFromFileApiView(APIView):
+    """
+    """
+    #permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request):
+        """
+        """
+        # read file uploadted
+        file_obj = request.FILES['file']
+        # Write file locally to parse
+        path = handle_uploaded_file(file_obj)
+        # parse file and extract data
+        data = get_values_from_text(path)
+        # serialize data and save this in db
+        serializer = ExtractedDataSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
