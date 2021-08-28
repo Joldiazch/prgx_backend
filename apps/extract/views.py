@@ -22,12 +22,14 @@ import os
 
 class ExtractFromPathApiView(APIView):
     """
+    view to get all extractedData stored and
+    to create an new extractedData from an path to file 
     """
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
     def get(self, request):
         """
+        get all extractedData stored in db_data
         """
         extracted_data = ExtractedData.objects.all()
         serializer = ExtractedDataSerializer(extracted_data, many=True)
@@ -36,6 +38,7 @@ class ExtractFromPathApiView(APIView):
 
     def post(self, request):
         """
+        create an new extractedData from an path to file
         """
 
         # get doc_path and creck is not None
@@ -69,11 +72,13 @@ class ExtractFromPathApiView(APIView):
 
 class ExtractFromFileApiView(APIView):
     """
+    extracted data from file in request (no path)
     """
-    #permission_classes = [IsAuthenticatedOrReadOnly]
+
 
     def post(self, request):
         """
+        extracted data from file in request (no path)
         """
         # read file uploadted
         file_obj = request.FILES['file']
@@ -87,3 +92,18 @@ class ExtractFromFileApiView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DbDataApiView(APIView):
+    """
+    view to get all extractedData stored in db
+    """
+
+
+    def get(self, request):
+        """
+        get all extractedData stored in db_data
+        """
+        extracted_data = ExtractedData.objects.all()
+        serializer = ExtractedDataSerializer(extracted_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
