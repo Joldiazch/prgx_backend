@@ -22,21 +22,10 @@ import os
 
 class ExtractFromPathApiView(APIView):
     """
-    view to get all extractedData stored and
-    to create an new extractedData from an path to file 
+    view to create an new extractedData from an path to file 
     """
 
-
     def get(self, request):
-        """
-        get all extractedData stored in db_data
-        """
-        extracted_data = ExtractedData.objects.all()
-        serializer = ExtractedDataSerializer(extracted_data, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-    def post(self, request):
         """
         create an new extractedData from an path to file
         """
@@ -67,7 +56,8 @@ class ExtractFromPathApiView(APIView):
         serializer = ExtractedDataSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            data_to_return = [[True, serializer.data.get('id')], serializer.data]
+            return Response(data_to_return, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ExtractFromFileApiView(APIView):
@@ -90,7 +80,8 @@ class ExtractFromFileApiView(APIView):
         serializer = ExtractedDataSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            data_to_return = [[True, serializer.data.get('id')], serializer.data]
+            return Response(data_to_return, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

@@ -20,7 +20,8 @@ class ExtractApiTestCase(TestCase):
         test if /extract/ endpoint is work
         """
         url = reverse('extract')
-        response = self.client.get(url)
+        path = './uploated_files/Doc2.pdf'
+        response = self.client.get(url+'?doc_path='+path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_ocr2(self):
